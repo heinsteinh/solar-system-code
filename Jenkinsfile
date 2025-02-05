@@ -4,9 +4,9 @@ pipeline {
   environment {
     NAME = "solar-system"
     VERSION = "${env.BUILD_ID}-${env.GIT_COMMIT}"
-    IMAGE_REPO = "siddharth67"
+    IMAGE_REPO = "fkheinstein"
     ARGOCD_TOKEN = credentials('argocd-token')
-    GITEA_TOKEN = credentials('gitea-token')
+    GITEA_TOKEN = credentials('github-token')
   }
   
   stages {
@@ -45,12 +45,12 @@ pipeline {
 
           } else {
             echo 'Repo does not exists - Cloning the repo'
-            sh 'git clone -b feature-gitea http://139.59.21.103:3000/siddharth/gitops-argocd'
+            sh 'git clone -b feature-gitea https://github.com/heinsteinh/gitops-argocd'
           }
         }
       }
     }
-    
+
     stage('Update Manifest') {
       steps {
         dir("gitops-argocd/jenkins-demo") {
@@ -64,7 +64,7 @@ pipeline {
       steps {
         dir("gitops-argocd/jenkins-demo") {
           sh "git config --global user.email 'jenkins@ci.com'"
-          sh 'git remote set-url origin http://$GITEA_TOKEN@139.59.21.103:3000/siddharth/gitops-argocd'
+          sh 'git remote set-url origin http://$GITEA_TOKEN@https://github.com/heinsteinh/gitops-argocd'
           sh 'git checkout feature-gitea'
           sh 'git add -A'
           sh 'git commit -am "Updated image version for Build - $VERSION"'
